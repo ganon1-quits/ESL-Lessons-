@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Current Events & Public Speaking Worksheets</title>
+<style>
+  :root {
+    --primary: #1a365d;
+    --primary-light: #2b6cb0;
+    --accent: #3182ce;
+    --bg: #f7fafc;
+    --card-bg: #ffffff;
+    --text: #2d3748;
+    --success: #38a169;
+    --error: #e53e3e;
+    --border: #cbd5e0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 850px;
+    margin: 0 auto;
+  }
+
+  header {
+    background-color: var(--primary);
+    color: white;
+    padding: 22px 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  header h1 {
+    margin: 0 0 6px 0;
+    font-size: 1.7rem;
+  }
+
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+  }
+
+  /* Navigation Tabs */
+  .tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .tab-button {
+    background-color: #edf2f7;
+    color: #4a5568;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .tab-button:hover {
+    background-color: #e2e8f0;
+    color: var(--primary);
+  }
+
+  .tab-button.active {
+    background-color: var(--card-bg);
+    color: var(--primary-light);
+    border-color: var(--border);
+    border-bottom: 2px solid var(--card-bg);
+    margin-bottom: -2px;
+  }
+
+  /* Tab Content Panels */
+  .tab-panel {
+    display: none;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .topic-title {
+    color: var(--primary);
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 1.35rem;
+    border-bottom: 2px solid #ebf8ff;
+    padding-bottom: 8px;
+  }
+
+  .article-link {
+    display: inline-block;
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .article-link:hover {
+    text-decoration: underline;
+  }
+
+  h3 {
+    color: var(--primary-light);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .def-list {
+    background-color: #f8fafc;
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin: 0 0 20px 0;
+    list-style: none;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .def-list li {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+
+  .def-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .def-word {
+    font-weight: bold;
+    color: var(--primary);
+  }
+
+  .def-pos {
+    font-style: italic;
+    color: #718096;
+    font-size: 0.85rem;
+  }
+
+  .instructions {
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-style: italic;
+    margin-bottom: 15px;
+  }
+
+  .cloze-item {
+    margin-bottom: 15px;
+    font-size: 0.98rem;
+  }
+
+  select {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    background-color: #fff;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+  }
+
+  select.correct {
+    border-color: var(--success);
+    background-color: #f0fff4;
+    color: #276749;
+    font-weight: bold;
+  }
+
+  select.incorrect {
+    border-color: var(--error);
+    background-color: #fff5f5;
+    color: #9b2c2c;
+  }
+
+  .btn-check {
+    background-color: var(--primary-light);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+  }
+
+  .btn-check:hover {
+    background-color: var(--primary);
+  }
+
+  .feedback {
+    display: inline-block;
+    margin-left: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .speaking-section {
+    background-color: #ebf8ff;
+    border: 1px solid #bee3f8;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 25px;
+  }
+
+  .speaking-title {
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+  }
+
+  .speaking-q {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+  }
+
+  .speaking-q:last-child {
+    margin-bottom: 0;
+  }
+
+  .speaking-label {
+    font-weight: bold;
+    color: var(--primary-light);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Current Events & Public Speaking Interactive Worksheets</h1>
+    <p>Target CEFR Level: B2–C1 | Select a topic tab to complete the quiz and view speaking prompts.</p>
+  </header>
+
+  <!-- TAB NAVIGATION -->
+  <ul class="tabs-nav">
+    <li><button class="tab-button active" onclick="openTab(event, 'topic1')">1. Social Media</button></li>
+    <li><button class="tab-button" onclick="openTab(event, 'topic2')">2. Multiculturalism</button></li>
+    <li><button class="tab-button" onclick="openTab(event, 'topic3')">3. Immigration</button></li>
+    <li><button class="tab-button" onclick="openTab(event, 'topic4')">4. Fertility Rates</button></li>
+    <li><button class="tab-button" onclick="openTab(event, 'topic5')">5. AI</button></li>
+  </ul>
+
+  <!-- TAB 1: SOCIAL MEDIA -->
+  <div class="tab-panel active" id="topic1">
+    <h2 class="topic-title">1. Social Media's Effect on Politics</h2>
+    <a class="article-link" href="https://www.theguardian.com/commentisfree/2025/nov/06/zohran-mamdani-new-york-zack-polanski-donald-trump-social-media-politics" target="_blank">🔗 Read Article on The Guardian: A note to politicians hoping to emulate social media strategies...</a>
+
+    <h3>Part 1: Key Vocabulary Definitions</h3>
+    <ul class="def-list">
+      <li><span class="def-word">Emulate</span> <span class="def-pos">(verb)</span>: To try to equal or copy someone or something, especially by imitating them.</li>
+      <li><span class="def-word">Polarization</span> <span class="def-pos">(noun)</span>: The division of a group or society into two sharply contrasting, opposing opinions or beliefs.</li>
+      <li><span class="def-word">Disillusioned</span> <span class="def-pos">(adjective)</span>: Feeling disappointed and unhappy after discovering that something is not as good or effective as previously believed.</li>
+      <li><span class="def-word">Virality</span> <span class="def-pos">(noun)</span>: The quality or state of being circulated rapidly and widely from one internet user to another.</li>
+      <li><span class="def-word">Populist</span> <span class="def-pos">(adjective/noun)</span>: Relating to a political approach that strives to appeal to ordinary people who feel ignored by elite groups.</li>
+    </ul>
+
+    <h3>Part 2: Vocabulary Cloze Exercise</h3>
+    <div class="instructions">Select the correct word for each gap and click "Check Answers".</div>
+
+    <div class="cloze-item">
+      1. Political candidates often attempt to 
+      <select data-ans="emulate">
+        <option value="">-- select --</option>
+        <option value="emulate">emulate</option>
+        <option value="polarization">polarization</option>
+        <option value="disillusioned">disillusioned</option>
+        <option value="virality">virality</option>
+        <option value="populist">populist</option>
+      </select> 
+      successful campaigns from abroad, but local context ultimately determines the outcome.
+    </div>
+
+    <div class="cloze-item">
+      2. The extreme rhetoric used on social platforms has deepened political 
+      <select data-ans="polarization">
+        <option value="">-- select --</option>
+        <option value="emulate">emulate</option>
+        <option value="polarization">polarization</option>
+        <option value="disillusioned">disillusioned</option>
+        <option value="virality">virality</option>
+        <option value="populist">populist</option>
+      </select>, making bipartisan compromise increasingly difficult.
+    </div>
+
+    <div class="cloze-item">
+      3. Many voters have become deeply 
+      <select data-ans="disillusioned">
+        <option value="">-- select --</option>
+        <option value="emulate">emulate</option>
+        <option value="polarization">polarization</option>
+        <option value="disillusioned">disillusioned</option>
+        <option value="virality">virality</option>
+        <option value="populist">populist</option>
+      </select> with traditional political parties, turning instead to non-mainstream digital movements.
+    </div>
+
+    <div class="cloze-item">
+      4. Social media algorithms are engineered to prioritize 
+      <select data-ans="virality">
+        <option value="">-- select --</option>
+        <option value="emulate">emulate</option>
+        <option value="polarization">polarization</option>
+        <option value="disillusioned">disillusioned</option>
+        <option value="virality">virality</option>
+        <option value="populist">populist</option>
+      </select> over nuanced policy debate, encouraging controversial statements.
+    </div>
+
+    <div class="cloze-item">
+      5. The politician adopted a 
+      <select data-ans="populist">
+        <option value="">-- select --</option>
+        <option value="emulate">emulate</option>
+        <option value="polarization">polarization</option>
+        <option value="disillusioned">disillusioned</option>
+        <option value="virality">virality</option>
+        <option value="populist">populist</option>
+      </select> stance, appealing directly to the general public’s grievances against established institutions.
+    </div>
+
+    <button class="btn-check" onclick="checkAnswers('topic1')">Check Answers</button>
+    <span class="feedback" id="feedback-topic1"></span>
+
+    <div class="speaking-section">
+      <div class="speaking-title">Part 3: Speaking & Critical Thinking</div>
+      <div class="speaking-q"><span class="speaking-label">Discussion Question:</span> How has the shift from traditional media (TV, newspapers) to short-form social media content changed the way citizens evaluate the trustworthiness of political leaders?</div>
+      <div class="speaking-q"><span class="speaking-label">Debate Motion:</span> "This house holds that social media algorithms are inherently incompatible with healthy democratic elections."</div>
+    </div>
+  </div>
+
+  <!-- TAB 2: MULTICULTURALISM -->
+  <div class="tab-panel" id="topic2">
+    <h2 class="topic-title">2. Multiculturalism</h2>
+    <a class="article-link" href="https://www.theguardian.com/commentisfree/2010/dec/19/anushka-asthana-multiculturalism-good" target="_blank">🔗 Read Article on The Guardian: Why did multiculturalism become a dirty word? It made me who I am</a>
+
+    <h3>Part 1: Key Vocabulary Definitions</h3>
+    <ul class="def-list">
+      <li><span class="def-word">Segregation</span> <span class="def-pos">(noun)</span>: The enforced or voluntary separation of different racial, religious, or ethnic groups within a society.</li>
+      <li><span class="def-word">Orthodoxy</span> <span class="def-pos">(noun)</span>: An accepted or traditional idea, belief, or practice that is viewed as standard or correct by most people.</li>
+      <li><span class="def-word">Cohesion</span> <span class="def-pos">(noun)</span>: The state or condition in which people or groups unite, work together, and remain connected.</li>
+      <li><span class="def-word">Assimilation</span> <span class="def-pos">(noun)</span>: The process in which a minority group or culture comes to resemble and adopt the values and beliefs of a dominant group.</li>
+      <li><span class="def-word">Harmonious</span> <span class="def-pos">(adjective)</span>: Characterized by agreement, peace, mutual understanding, and freedom from conflict.</li>
+    </ul>
+
+    <h3>Part 2: Vocabulary Cloze Exercise</h3>
+    <div class="instructions">Select the correct word for each gap and click "Check Answers".</div>
+
+    <div class="cloze-item">
+      1. Critics argue that an overemphasis on cultural differences can inadvertently lead to self-imposed social 
+      <select data-ans="segregation">
+        <option value="">-- select --</option>
+        <option value="segregation">segregation</option>
+        <option value="orthodoxy">orthodoxy</option>
+        <option value="cohesion">cohesion</option>
+        <option value="assimilation">assimilation</option>
+        <option value="harmonious">harmonious</option>
+      </select> rather than integration.
+    </div>
+
+    <div class="cloze-item">
+      2. For decades, promoting diversity was seen as the undisputed liberal 
+      <select data-ans="orthodoxy">
+        <option value="">-- select --</option>
+        <option value="segregation">segregation</option>
+        <option value="orthodoxy">orthodoxy</option>
+        <option value="cohesion">cohesion</option>
+        <option value="assimilation">assimilation</option>
+        <option value="harmonious">harmonious</option>
+      </select>, but political commentators are now questioning its outcome.
+    </div>
+
+    <div class="cloze-item">
+      3. Government policies aim to foster social 
+      <select data-ans="cohesion">
+        <option value="">-- select --</option>
+        <option value="segregation">segregation</option>
+        <option value="orthodoxy">orthodoxy</option>
+        <option value="cohesion">cohesion</option>
+        <option value="assimilation">assimilation</option>
+        <option value="harmonious">harmonious</option>
+      </select> by encouraging communities from diverse backgrounds to participate in shared civic activities.
+    </div>
+
+    <div class="cloze-item">
+      4. Unlike total cultural 
+      <select data-ans="assimilation">
+        <option value="">-- select --</option>
+        <option value="segregation">segregation</option>
+        <option value="orthodoxy">orthodoxy</option>
+        <option value="cohesion">cohesion</option>
+        <option value="assimilation">assimilation</option>
+        <option value="harmonious">harmonious</option>
+      </select>, which requires migrants to give up their heritage, multiculturalism allows individuals to retain their cultural identity.
+    </div>
+
+    <div class="cloze-item">
+      5. A successful multicultural society relies on building a 
+      <select data-ans="harmonious">
+        <option value="">-- select --</option>
+        <option value="segregation">segregation</option>
+        <option value="orthodoxy">orthodoxy</option>
+        <option value="cohesion">cohesion</option>
+        <option value="assimilation">assimilation</option>
+        <option value="harmonious">harmonious</option>
+      </select> environment where diverse traditions are understood and respected.
+    </div>
+
+    <button class="btn-check" onclick="checkAnswers('topic2')">Check Answers</button>
+    <span class="feedback" id="feedback-topic2"></span>
+
+    <div class="speaking-section">
+      <div class="speaking-title">Part 3: Speaking & Critical Thinking</div>
+      <div class="speaking-q"><span class="speaking-label">Discussion Question:</span> Is there a conflict between preserving one's minority cultural identity and fully integrating into a nation's dominant civic culture?</div>
+      <div class="speaking-q"><span class="speaking-label">Debate Motion:</span> "This house believes that national governments should prioritize a single, unified civic identity over the celebration of distinct multicultural identities."</div>
+    </div>
+  </div>
+
+  <!-- TAB 3: IMMIGRATION -->
+  <div class="tab-panel" id="topic3">
+    <h2 class="topic-title">3. Immigration</h2>
+    <a class="article-link" href="https://www.theguardian.com/world/2021/may/17/new-zealand-to-cut-low-skill-immigration-and-refocus-on-wealthy" target="_blank">🔗 Read Article on The Guardian: New Zealand to cut 'low-skill' immigration and refocus on wealthy</a>
+
+    <h3>Part 1: Key Vocabulary Definitions</h3>
+    <ul class="def-list">
+      <li><span class="def-word">Shortage</span> <span class="def-pos">(noun)</span>: A situation in which there is not enough of something that is needed or wanted.</li>
+      <li><span class="def-word">Suppress</span> <span class="def-pos">(verb)</span>: To forcibly prevent, restrain, or keep something under control (e.g., keeping wage growth artificially low).</li>
+      <li><span class="def-word">Infrastructure</span> <span class="def-pos">(noun)</span>: The basic physical structures and facilities (roads, housing, transport) needed for the operation of a society.</li>
+      <li><span class="def-word">Upskill</span> <span class="def-pos">(verb)</span>: To teach an employee or worker additional, higher-level skills so they can perform more complex tasks.</li>
+      <li><span class="def-word">Reliance</span> <span class="def-pos">(noun)</span>: The state of depending on or trusting someone or something for support or survival.</li>
+    </ul>
+
+    <h3>Part 2: Vocabulary Cloze Exercise</h3>
+    <div class="instructions">Select the correct word for each gap and click "Check Answers".</div>
+
+    <div class="cloze-item">
+      1. Business groups argued that reducing migrant visas would exacerbate the severe labor 
+      <select data-ans="shortage">
+        <option value="">-- select --</option>
+        <option value="shortage">shortage</option>
+        <option value="suppress">suppress</option>
+        <option value="infrastructure">infrastructure</option>
+        <option value="upskill">upskill</option>
+        <option value="reliance">reliance</option>
+      </select> currently affecting the hospitality and agricultural sectors.
+    </div>
+
+    <div class="cloze-item">
+      2. Economists suggest that relying heavily on low-wage temporary labor can 
+      <select data-ans="suppress">
+        <option value="">-- select --</option>
+        <option value="shortage">shortage</option>
+        <option value="suppress">suppress</option>
+        <option value="infrastructure">infrastructure</option>
+        <option value="upskill">upskill</option>
+        <option value="reliance">reliance</option>
+      </select> domestic wages and lower productivity growth.
+    </div>
+
+    <div class="cloze-item">
+      3. Rapid population growth driven by net migration puts significant strain on local 
+      <select data-ans="infrastructure">
+        <option value="">-- select --</option>
+        <option value="shortage">shortage</option>
+        <option value="suppress">suppress</option>
+        <option value="infrastructure">infrastructure</option>
+        <option value="upskill">upskill</option>
+        <option value="reliance">reliance</option>
+      </select>, such as housing, public transit, and healthcare.
+    </div>
+
+    <div class="cloze-item">
+      4. The government urged businesses to invest in training to 
+      <select data-ans="upskill">
+        <option value="">-- select --</option>
+        <option value="shortage">shortage</option>
+        <option value="suppress">suppress</option>
+        <option value="infrastructure">infrastructure</option>
+        <option value="upskill">upskill</option>
+        <option value="reliance">reliance</option>
+      </select> domestic workers rather than depending on overseas labor markets.
+    </div>
+
+    <div class="cloze-item">
+      5. Ministers signaled a policy shift away from a structural 
+      <select data-ans="reliance">
+        <option value="">-- select --</option>
+        <option value="shortage">shortage</option>
+        <option value="suppress">suppress</option>
+        <option value="infrastructure">infrastructure</option>
+        <option value="upskill">upskill</option>
+        <option value="reliance">reliance</option>
+      </select> on temporary migrant labor to fill essential workforce gaps.
+    </div>
+
+    <button class="btn-check" onclick="checkAnswers('topic3')">Check Answers</button>
+    <span class="feedback" id="feedback-topic3"></span>
+
+    <div class="speaking-section">
+      <div class="speaking-title">Part 3: Speaking & Critical Thinking</div>
+      <div class="speaking-q"><span class="speaking-label">Discussion Question:</span> What are the ethical and economic implications of a country prioritizing wealthy or highly skilled immigrants over low-skilled applicants?</div>
+      <div class="speaking-q"><span class="speaking-label">Debate Motion:</span> "This house would cap net migration levels to protect local housing markets and infrastructure."</div>
+    </div>
+  </div>
+
+  <!-- TAB 4: GLOBAL FERTILITY RATES -->
+  <div class="tab-panel" id="topic4">
+    <h2 class="topic-title">4. Global Fertility Rates</h2>
+    <a class="article-link" href="https://www.theguardian.com/world/article/2024/aug/11/global-birthrates-dropping" target="_blank">🔗 Read Article on The Guardian: Birthrates are plummeting worldwide. Can governments turn the tide?</a>
+
+    <h3>Part 1: Key Vocabulary Definitions</h3>
+    <ul class="def-list">
+      <li><span class="def-word">Replacement</span> <span class="def-pos">(noun)</span>: The total fertility rate needed for a population to replace itself from one generation to the next (~2.1 births per woman).</li>
+      <li><span class="def-word">Dependency</span> <span class="def-pos">(noun)</span>: A measure showing the ratio of dependents (under 15 or over 65) to the working-age population (15–64).</li>
+      <li><span class="def-word">Incentive</span> <span class="def-pos">(noun)</span>: A financial or structural reward offered to encourage a person or group to take a specific action or behavior.</li>
+      <li><span class="def-word">Contraction</span> <span class="def-pos">(noun)</span>: The process of becoming smaller, shrinking, or decreasing in economic size or volume.</li>
+      <li><span class="def-word">Demographic</span> <span class="def-pos">(adjective/noun)</span>: Relating to the structure, distribution, and characteristics of human populations.</li>
+    </ul>
+
+    <h3>Part 2: Vocabulary Cloze Exercise</h3>
+    <div class="instructions">Select the correct word for each gap and click "Check Answers".</div>
+
+    <div class="cloze-item">
+      1. Most developed nations have fertility rates well below the standard 
+      <select data-ans="replacement">
+        <option value="">-- select --</option>
+        <option value="replacement">replacement</option>
+        <option value="dependency">dependency</option>
+        <option value="incentive">incentive</option>
+        <option value="contraction">contraction</option>
+        <option value="demographic">demographic</option>
+      </select> rate of 2.1 children per woman required to maintain population stability.
+    </div>
+
+    <div class="cloze-item">
+      2. A shrinking workforce paired with a growing elderly population creates a dangerously high old-age 
+      <select data-ans="dependency">
+        <option value="">-- select --</option>
+        <option value="replacement">replacement</option>
+        <option value="dependency">dependency</option>
+        <option value="incentive">incentive</option>
+        <option value="contraction">contraction</option>
+        <option value="demographic">demographic</option>
+      </select> ratio.
+    </div>
+
+    <div class="cloze-item">
+      3. To encourage young couples to have larger families, the state introduced financial 
+      <select data-ans="incentive">
+        <option value="">-- select --</option>
+        <option value="replacement">replacement</option>
+        <option value="dependency">dependency</option>
+        <option value="incentive">incentive</option>
+        <option value="contraction">contraction</option>
+        <option value="demographic">demographic</option>
+      </select>, including housing subsidies and extended parental leave.
+    </div>
+
+    <div class="cloze-item">
+      4. Analysts predict that prolonged population decline will eventually lead to economic 
+      <select data-ans="contraction">
+        <option value="">-- select --</option>
+        <option value="replacement">replacement</option>
+        <option value="dependency">dependency</option>
+        <option value="incentive">incentive</option>
+        <option value="contraction">contraction</option>
+        <option value="demographic">demographic</option>
+      </select> and severe labor shortages across key industries.
+    </div>
+
+    <div class="cloze-item">
+      5. Shifts in global 
+      <select data-ans="demographic">
+        <option value="">-- select --</option>
+        <option value="replacement">replacement</option>
+        <option value="dependency">dependency</option>
+        <option value="incentive">incentive</option>
+        <option value="contraction">contraction</option>
+        <option value="demographic">demographic</option>
+      </select> trends will fundamentally alter how governments manage national pension systems and healthcare.
+    </div>
+
+    <button class="btn-check" onclick="checkAnswers('topic4')">Check Answers</button>
+    <span class="feedback" id="feedback-topic4"></span>
+
+    <div class="speaking-section">
+      <div class="speaking-title">Part 3: Speaking & Critical Thinking</div>
+      <div class="speaking-q"><span class="speaking-label">Discussion Question:</span> To what extent are falling birth rates a result of economic barriers (such as housing costs) versus changing cultural values regarding career and family life?</div>
+      <div class="speaking-q"><span class="speaking-label">Debate Motion:</span> "This house believes governments should tax childless adults at higher rates to fund incentives for growing families."</div>
+    </div>
+  </div>
+
+  <!-- TAB 5: AI -->
+  <div class="tab-panel" id="topic5">
+    <h2 class="topic-title">5. Artificial Intelligence (AI)</h2>
+    <a class="article-link" href="https://www.theguardian.com/business/2025/aug/14/ai-artificial-intelligence-jobs-cleaning-construction-hospitality-australian-report" target="_blank">🔗 Read Article on The Guardian: Is AI going to steal your job? Not if you work in cleaning, construction or hospitality, Australian report finds</a>
+
+    <h3>Part 1: Key Vocabulary Definitions</h3>
+    <ul class="def-list">
+      <li><span class="def-word">Implementation</span> <span class="def-pos">(noun)</span>: The process of putting a decision, plan, system, or software into effect or action.</li>
+      <li><span class="def-word">Bias</span> <span class="def-pos">(noun)</span>: An inclination or prejudice for or against one person or group, especially in an unfair way.</li>
+      <li><span class="def-word">Automation</span> <span class="def-pos">(noun)</span>: The use of technology, software, or machinery to perform tasks without human intervention.</li>
+      <li><span class="def-word">Ethical</span> <span class="def-pos">(adjective)</span>: Relating to moral principles or rules of conduct that govern behavior.</li>
+      <li><span class="def-word">Displacement</span> <span class="def-pos">(noun)</span>: The forced movement of people or workers from their positions or roles due to technology.</li>
+    </ul>
+
+    <h3>Part 2: Vocabulary Cloze Exercise</h3>
+    <div class="instructions">Select the correct word for each gap and click "Check Answers".</div>
+
+    <div class="cloze-item">
+      1. The rapid 
+      <select data-ans="implementation">
+        <option value="">-- select --</option>
+        <option value="implementation">implementation</option>
+        <option value="bias">bias</option>
+        <option value="automation">automation</option>
+        <option value="ethical">ethical</option>
+        <option value="displacement">displacement</option>
+      </select> of generative AI tools across white-collar industries has caught regulatory bodies off guard.
+    </div>
+
+    <div class="cloze-item">
+      2. If training data contains historical prejudices, machine learning algorithms will inevitably perpetuate systemic 
+      <select data-ans="bias">
+        <option value="">-- select --</option>
+        <option value="implementation">implementation</option>
+        <option value="bias">bias</option>
+        <option value="automation">automation</option>
+        <option value="ethical">ethical</option>
+        <option value="displacement">displacement</option>
+      </select>.
+    </div>
+
+    <div class="cloze-item">
+      3. Experts warn that widespread workplace 
+      <select data-ans="automation">
+        <option value="">-- select --</option>
+        <option value="implementation">implementation</option>
+        <option value="bias">bias</option>
+        <option value="automation">automation</option>
+        <option value="ethical">ethical</option>
+        <option value="displacement">displacement</option>
+      </select> will affect not only manual labor, but also cognitive and creative professions.
+    </div>
+
+    <div class="cloze-item">
+      4. The widespread adoption of technology poses major 
+      <select data-ans="ethical">
+        <option value="">-- select --</option>
+        <option value="implementation">implementation</option>
+        <option value="bias">bias</option>
+        <option value="automation">automation</option>
+        <option value="ethical">ethical</option>
+        <option value="displacement">displacement</option>
+      </select> questions regarding data privacy and algorithmic accountability.
+    </div>
+
+    <div class="cloze-item">
+      5. Large-scale technological changes often result in initial labor 
+      <select data-ans="displacement">
+        <option value="">-- select --</option>
+        <option value="implementation">implementation</option>
+        <option value="bias">bias</option>
+        <option value="automation">automation</option>
+        <option value="ethical">ethical</option>
+        <option value="displacement">displacement</option>
+      </select> before workers can transition into newly emerging job sectors.
+    </div>
+
+    <button class="btn-check" onclick="checkAnswers('topic5')">Check Answers</button>
+    <span class="feedback" id="feedback-topic5"></span>
+
+    <div class="speaking-section">
+      <div class="speaking-title">Part 3: Speaking & Critical Thinking</div>
+      <div class="speaking-q"><span class="speaking-label">Discussion Question:</span> Which professional industries are most vulnerable to AI integration, and how can education systems adapt to prepare future graduates?</div>
+      <div class="speaking-q"><span class="speaking-label">Debate Motion:</span> "This house would mandate a corporate tax on companies that replace human employees with automated AI systems."</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openTab(evt, topicId) {
+  // Hide all tab panels
+  const panels = document.querySelectorAll('.tab-panel');
+  panels.forEach(panel => panel.classList.remove('active'));
+
+  // Deactivate all tab buttons
+  const buttons = document.querySelectorAll('.tab-button');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // Show current tab panel and mark button as active
+  document.getElementById(topicId).classList.add('active');
+  evt.currentTarget.classList.add('active');
+}
+
+function checkAnswers(topicId) {
+  const container = document.getElementById(topicId);
+  const selects = container.querySelectorAll('select');
+  let correctCount = 0;
+  let total = selects.length;
+
+  selects.forEach(select => {
+    const expected = select.getAttribute('data-ans');
+    const actual = select.value;
+    
+    if (actual === expected) {
+      select.className = 'correct';
+      correctCount++;
+    } else {
+      select.className = 'incorrect';
+    }
+  });
+
+  const feedback = document.getElementById('feedback-' + topicId);
+  if (correctCount === total) {
+    feedback.textContent = `Excellent! ${correctCount}/${total} correct.`;
+    feedback.style.color = '#276749';
+  } else {
+    feedback.textContent = `Score: ${correctCount}/${total}. Try again!`;
+    feedback.style.color = '#e53e3e';
+  }
+}
+</script>
+
+</body>
+</html>
