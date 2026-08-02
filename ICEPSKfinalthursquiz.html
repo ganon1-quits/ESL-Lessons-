@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Events & Public Speaking — Interactive Quizzes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --accent-amber: #f59e0b;
+            --accent-green: #22c55e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        header p { color: var(--text-secondary); font-size: 1.05rem; font-weight: 300; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+
+        .tab-btn.active {
+            background: var(--accent-red);
+            color: #ffffff;
+            border-color: var(--accent-red);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .article-banner {
+            background: #0f172a;
+            border-left: 4px solid var(--accent-amber);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .article-banner a {
+            color: var(--accent-amber);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .vocab-card {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .vocab-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .vocab-word { font-weight: 700; font-size: 1rem; color: #ffffff; }
+        .vocab-pos { font-size: 0.8rem; color: var(--accent-amber); font-style: italic; }
+        .vocab-def { font-size: 0.88rem; color: var(--text-secondary); }
+
+        .quiz-container {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .quiz-title {
+            color: var(--accent-amber);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .cloze-list { padding-left: 20px; }
+        .cloze-list li { margin-bottom: 16px; font-size: 0.98rem; line-height: 1.8; }
+
+        .cloze-input {
+            background: #1e293b;
+            border: 1.5px solid var(--border-color);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 170px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .cloze-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .cloze-input.correct {
+            border-color: var(--accent-green) !important;
+            background: rgba(34, 197, 94, 0.1) !important;
+            color: #4ade80 !important;
+        }
+
+        .cloze-input.incorrect {
+            border-color: var(--accent-red) !important;
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #fca5a5 !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover { opacity: 0.9; }
+
+        .action-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .action-btn.secondary:hover { color: var(--text-primary); border-color: var(--text-primary); }
+
+        .prompt-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .prompt-box h4 {
+            color: var(--accent-blue);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .prompt-list { list-style: none; }
+        .prompt-list li {
+            position: relative;
+            padding-left: 26px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 0.98rem;
+        }
+
+        .prompt-list li::before {
+            content: "🗣️";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>International Current Events & Public Speaking</h1>
+        <p>Interactive Vocabulary Practice & Debate Prompts</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'topic1')">1. Social Media</button>
+        <button class="tab-btn" onclick="openTab(event, 'topic2')">2. Multiculturalism</button>
+        <button class="tab-btn" onclick="openTab(event, 'topic3')">3. Immigration</button>
+        <button class="tab-btn" onclick="openTab(event, 'topic4')">4. Fertility Rates</button>
+        <button class="tab-btn" onclick="openTab(event, 'topic5')">5. AI</button>
+    </div>
+
+    <!-- Topic 1 -->
+    <div id="topic1" class="tab-content active">
+        <div class="card">
+            <div class="card-title">1. Social Media's Effect on Politics</div>
+            
+            <div class="article-banner">
+                <strong>Reading Context:</strong> <a href="https://www.youngausint.org.au/post/how-social-media-algorithms-are-increasing-political-polarisation" target="_blank">How Social Media Algorithms Are Increasing Political Polarisation</a>
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: var(--accent-blue);">Vocabulary Bank</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Echo Chamber</span><span class="vocab-pos">noun</span></div><div class="vocab-def">An environment where a person only encounters information that reinforces their own views.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Algorithm</span><span class="vocab-pos">noun</span></div><div class="vocab-def">A set of computer rules designed to process data and prioritize online content.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Polarization</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The division of a population into sharply opposing political factions.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Disinformation</span><span class="vocab-pos">noun</span></div><div class="vocab-def">False or misleading information deliberately spread to deceive the public.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Engagement</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The level of interaction (likes, shares, comments) users have with online posts.</div></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-title">Interactive Cloze Quiz</div>
+                <ol class="cloze-list">
+                    <li>Social media platforms design their algorithms to maximize user <input type="text" class="cloze-input" data-answer="engagement">, which often means promoting controversial posts.</li>
+                    <li>When voters spend time in an online <input type="text" class="cloze-input" data-answer="echo chamber">, they rarely hear contrasting political perspectives.</li>
+                    <li>The deliberate spread of political <input type="text" class="cloze-input" data-answer="disinformation"> during election cycles threatens voters' ability to make informed choices.</li>
+                    <li>Deepening political <input type="text" class="cloze-input" data-answer="polarization"> makes it difficult for opposing political parties to compromise on legislation.</li>
+                    <li>A social media network relies on a complex <input type="text" class="cloze-input" data-answer="algorithm"> to determine which posts appear at the top of your newsfeed.</li>
+                </ol>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="checkQuiz('topic1')">Check Answers</button>
+                    <button class="action-btn secondary" onclick="revealQuiz('topic1')">Reveal Answers</button>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Discussion & Debate Questions</h4>
+                <ul class="prompt-list">
+                    <li>Should social media companies be legally responsible for regulating fake news on their platforms, or should users be expected to verify their own sources?</li>
+                    <li><strong>Debate:</strong> "Social media algorithms do more harm to democratic political elections than good."</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topic 2 -->
+    <div id="topic2" class="tab-content">
+        <div class="card">
+            <div class="card-title">2. Multiculturalism</div>
+            
+            <div class="article-banner">
+                <strong>Reading Context:</strong> <a href="https://oercollective.caul.edu.au/aust-politics-policy/chapter/multicultural-australia/" target="_blank">Multicultural Australia: Identity, Policy, and Social Cohesion</a>
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: var(--accent-blue);">Vocabulary Bank</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Cohesion</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The action or state of sticking together; social unity within a community.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Assimilation</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The process by which a minority group adopts the customs of the dominant culture.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Integration</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The process of bringing diverse ethnic groups into equal membership in society.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Inclusivity</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The practice of providing equal access to opportunities for marginalized groups.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Pluralism</span><span class="vocab-pos">noun</span></div><div class="vocab-def">A condition in which minority groups participate fully while maintaining cultural differences.</div></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-title">Interactive Cloze Quiz</div>
+                <ol class="cloze-list">
+                    <li>Historical policies demanded total <input type="text" class="cloze-input" data-answer="assimilation">, forcing migrants to abandon their native languages and traditions.</li>
+                    <li>Modern Australian social policy encourages cultural <input type="text" class="cloze-input" data-answer="pluralism">, allowing diverse heritage to coexist alongside national values.</li>
+                    <li>Successful economic <input type="text" class="cloze-input" data-answer="integration"> ensures that new arrivals have access to fair employment and public services.</li>
+                    <li>Community organizations foster social <input type="text" class="cloze-input" data-answer="cohesion"> by hosting events that bring different ethnic groups together.</li>
+                    <li>Workplace leadership programs are improving corporate <input type="text" class="cloze-input" data-answer="inclusivity"> by appointing diverse cultural representatives to executive boards.</li>
+                </ol>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="checkQuiz('topic2')">Check Answers</button>
+                    <button class="action-btn secondary" onclick="revealQuiz('topic2')">Reveal Answers</button>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Discussion & Debate Questions</h4>
+                <ul class="prompt-list">
+                    <li>Is it enough for a nation to celebrate multiculturalism through food and festivals, or does true integration require deeper systemic changes?</li>
+                    <li><strong>Debate:</strong> "Maintaining a shared national identity is more important for a country's success than preserving distinct cultural heritage."</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topic 3 -->
+    <div id="topic3" class="tab-content">
+        <div class="card">
+            <div class="card-title">3. Immigration</div>
+            
+            <div class="article-banner">
+                <strong>Reading Context:</strong> <a href="https://www.abc.net.au/news/2025-09-16/queensland-building-industry-lobbies-more-skilled-migrants/105774824" target="_blank">Building Industry Lobbies for Skilled Overseas Workers Amid Housing Crisis</a> (ABC News)
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: var(--accent-blue);">Vocabulary Bank</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Shortage</span><span class="vocab-pos">noun</span></div><div class="vocab-def">A situation in which something needed cannot be obtained in sufficient quantities.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Infrastructure</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The basic physical structures (e.g. roads, housing) needed for society to function.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Displacement</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The enforced departure of people from their homes or traditional places of living.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Net Migration</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The overall difference between the number of immigrants entering and leaving a country.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Concession</span><span class="vocab-pos">noun</span></div><div class="vocab-def">Something that is granted or allowed, often in response to special demands or needs.</div></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-title">Interactive Cloze Quiz</div>
+                <ol class="cloze-list">
+                    <li>Industry groups argue that a severe worker <input type="text" class="cloze-input" data-answer="shortage"> in construction is slowing down the building of new homes.</li>
+                    <li>Rapid population growth puts significant strain on public <input type="text" class="cloze-input" data-answer="infrastructure">, such as hospitals, schools, and roads.</li>
+                    <li>The government adjusted its visa rules to grant a special visa <input type="text" class="cloze-input" data-answer="concession"> to needed healthcare workers.</li>
+                    <li>Critics argue that unmanaged levels of <input type="text" class="cloze-input" data-answer="net migration"> worsen the current housing affordability crisis.</li>
+                    <li>High rental prices have led to the residential <input type="text" class="cloze-input" data-answer="displacement"> of lower-income families moving away from major city centers.</li>
+                </ol>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="checkQuiz('topic3')">Check Answers</button>
+                    <button class="action-btn secondary" onclick="revealQuiz('topic3')">Reveal Answers</button>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Discussion & Debate Questions</h4>
+                <ul class="prompt-list">
+                    <li>How can a government balance the immediate economic need for skilled migrant labor with the public pressure caused by housing shortages?</li>
+                    <li><strong>Debate:</strong> "Governments should temporarily pause immigration intake until domestic housing and public infrastructure catch up."</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topic 4 -->
+    <div id="topic4" class="tab-content">
+        <div class="card">
+            <div class="card-title">4. Global Fertility Rates</div>
+            
+            <div class="article-banner">
+                <strong>Reading Context:</strong> <a href="https://www.theguardian.com/commentisfree/2026/may/31/right-solution-falling-birthrates-immigration-reform-maga" target="_blank">Falling Birthrates and Demographic Solutions</a> (The Guardian)
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: var(--accent-blue);">Vocabulary Bank</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Demographic</span><span class="vocab-pos">adj. / noun</span></div><div class="vocab-def">Relating to the structure of populations (age, birthrates, income).</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Replacement Rate</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The average number of children per woman required to keep population stable (~2.1).</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Pro-natalist</span><span class="vocab-pos">adj.</span></div><div class="vocab-def">Encouraging or promoting child-bearing and family growth.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Aging Population</span><span class="vocab-pos">phrase</span></div><div class="vocab-def">An increasing median age in a population due to declining fertility and rising life span.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Incentive</span><span class="vocab-pos">noun</span></div><div class="vocab-def">A payment or reward offered to encourage someone to take a specific action.</div></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-title">Interactive Cloze Quiz</div>
+                <ol class="cloze-list">
+                    <li>Many developed nations have fertility levels far below the required <input type="text" class="cloze-input" data-answer="replacement rate"> of 2.1 children per woman.</li>
+                    <li>Governments are offering financial cash bonuses as an <input type="text" class="cloze-input" data-answer="incentive"> for young couples to start families.</li>
+                    <li>The long-term economic burden of an <input type="text" class="cloze-input" data-answer="aging population"> will fall on a shrinking workforce of young taxpayers.</li>
+                    <li>European nations have introduced <input type="text" class="cloze-input" data-answer="pro-natalist"> policies, such as subsidized childcare and tax breaks, to boost falling birthrates.</li>
+                    <li>Recent <input type="text" class="cloze-input" data-answer="demographic"> studies show that global population growth will likely peak much sooner than previously anticipated.</li>
+                </ol>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="checkQuiz('topic4')">Check Answers</button>
+                    <button class="action-btn secondary" onclick="revealQuiz('topic4')">Reveal Answers</button>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Discussion & Debate Questions</h4>
+                <ul class="prompt-list">
+                    <li>What are the primary reasons modern couples are delaying parenthood or choosing to have fewer children?</li>
+                    <li><strong>Debate:</strong> "A falling global birthrate is positive for the environment and planet, rather than an economic disaster."</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topic 5 -->
+    <div id="topic5" class="tab-content">
+        <div class="card">
+            <div class="card-title">5. Artificial Intelligence (AI)</div>
+            
+            <div class="article-banner">
+                <strong>Reading Context:</strong> <a href="https://www.abc.net.au/news/2025-11-07/overseas-workers-regional-shire-staff-wa/105944266" target="_blank">How Regional Communities and Industries Are Affected by Workforce & Tech Shifts</a> (ABC News)
+            </div>
+
+            <h3 style="margin-bottom: 12px; color: var(--accent-blue);">Vocabulary Bank</h3>
+            <div class="vocab-grid">
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Automation</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The use of automatic equipment and machines in a system or operation.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Displacement</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The removal of someone from their job or role due to technological change.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Productivity</span><span class="vocab-pos">noun</span></div><div class="vocab-def">The rate at which goods or services are produced relative to output.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Generative</span><span class="vocab-pos">adj.</span></div><div class="vocab-def">Capable of producing new text, images, or code from existing data.</div></div>
+                <div class="vocab-card"><div class="vocab-head"><span class="vocab-word">Regulation</span><span class="vocab-pos">noun</span></div><div class="vocab-def">Rules or directives made and maintained by an authority to govern tech.</div></div>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-title">Interactive Cloze Quiz</div>
+                <ol class="cloze-list">
+                    <li>Companies are implementing worker training to protect staff against job <input type="text" class="cloze-input" data-answer="displacement"> caused by artificial intelligence.</li>
+                    <li>New <input type="text" class="cloze-input" data-answer="generative"> AI models can draft professional emails, write software code, and design images in seconds.</li>
+                    <li>The rapid adoption of administrative tech tools has dramatically increased workplace <input type="text" class="cloze-input" data-answer="productivity"> across many sectors.</li>
+                    <li>Routine factory tasks are increasingly undergoing full <input type="text" class="cloze-input" data-answer="automation">, leaving workers to focus on complex decision-making.</li>
+                    <li>Lawmakers are struggling to write effective tech <input type="text" class="cloze-input" data-answer="regulation"> that protects personal privacy without stopping innovation.</li>
+                </ol>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="checkQuiz('topic5')">Check Answers</button>
+                    <button class="action-btn secondary" onclick="revealQuiz('topic5')">Reveal Answers</button>
+                </div>
+            </div>
+
+            <div class="prompt-box">
+                <h4>Discussion & Debate Questions</h4>
+                <ul class="prompt-list">
+                    <li>Should educational institutions embrace generative AI tools like ChatGPT for student learning, or restrict their use to prevent academic dishonesty?</li>
+                    <li><strong>Debate:</strong> "Artificial intelligence will ultimately create more high-quality jobs than it eliminates."</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>International Current Events & Public Speaking | Upper-Intermediate & Advanced English (B2–C1)</p>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function checkQuiz(tabId) {
+            const tab = document.getElementById(tabId);
+            const inputs = tab.querySelectorAll('.cloze-input');
+            inputs.forEach(input => {
+                const userVal = input.value.trim().toLowerCase();
+                const correctVal = input.getAttribute('data-answer').toLowerCase();
+                if (userVal === correctVal) {
+                    input.classList.remove('incorrect');
+                    input.classList.add('correct');
+                } else {
+                    input.classList.remove('correct');
+                    input.classList.add('incorrect');
+                }
+            });
+        }
+
+        function revealQuiz(tabId) {
+            const tab = document.getElementById(tabId);
+            const inputs = tab.querySelectorAll('.cloze-input');
+            inputs.forEach(input => {
+                input.value = input.getAttribute('data-answer');
+                input.classList.remove('incorrect');
+                input.classList.add('correct');
+            });
+        }
+    </script>
+</body>
+</html>
