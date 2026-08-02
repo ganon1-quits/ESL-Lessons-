@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don't Look Up - Interactive Learning Guide</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success-color: #22c55e;
+            --error-color: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            color: var(--accent-blue);
+            font-size: 2.2rem;
+        }
+
+        p.subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+            border-color: var(--accent-blue);
+        }
+
+        .segment-panel {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .segment-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            color: var(--accent-blue);
+            margin: 0 0 6px 0;
+            font-size: 1.5rem;
+        }
+
+        .timestamp {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .blurb-box {
+            background-color: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+            font-size: 0.98rem;
+            color: #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-blue);
+            margin: 20px 0 12px 0;
+            font-weight: 700;
+        }
+
+        .vocab-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .vocab-card {
+            background-color: #0f172a;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .vocab-word {
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-right: 8px;
+        }
+
+        .vocab-def {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .cloze-container {
+            background-color: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .cloze-sentence {
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        select.cloze-select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1.5px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select.cloze-select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        select.cloze-select.correct {
+            border-color: var(--success-color);
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+        }
+
+        select.cloze-select.incorrect {
+            border-color: var(--error-color);
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+        }
+
+        .check-btn {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .check-btn:hover {
+            background-color: var(--accent-hover);
+            color: #fff;
+        }
+
+        .feedback-msg {
+            margin-left: 15px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .questions-section {
+            background-color: #0f172a;
+            border-radius: 8px;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+        }
+
+        .q-box {
+            margin-bottom: 12px;
+        }
+
+        .q-box:last-child {
+            margin-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 8px;
+        }
+
+        .badge-disc { background-color: #0284c7; color: #fff; }
+        .badge-deb { background-color: #d97706; color: #fff; }
+
+        @media (max-width: 600px) {
+            .nav-tabs { flex-direction: column; }
+            .tab-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Don't Look Up</h1>
+        <p class="subtitle">Interactive Media Literacy & Public Speaking Learning Module</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="showSegment(0)">Intro</button>
+        <button class="tab-btn" onclick="showSegment(1)">Segment 1</button>
+        <button class="tab-btn" onclick="showSegment(2)">Segment 2</button>
+        <button class="tab-btn" onclick="showSegment(3)">Segment 3</button>
+        <button class="tab-btn" onclick="showSegment(4)">Segment 4</button>
+        <button class="tab-btn" onclick="showSegment(5)">Segment 5</button>
+        <button class="tab-btn" onclick="showSegment(6)">Segment 6</button>
+    </div>
+
+    <!-- INTRO PANEL -->
+    <div class="segment-panel active" id="panel-0">
+        <div class="panel-header">
+            <h2 class="panel-title">Introductory Segment: The Premise & Theme</h2>
+            <span class="timestamp">Pre-Viewing Module</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Movie Overview:</strong> <em>Don't Look Up</em> (2021) is a sharp political satire following two astronomers who discover an approaching comet capable of destroying Earth. As they try to warn the government and media, they are met with distraction, greed, and political division. The film explores themes of public communication, scientific consensus, media sensationalism, and political apathy.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Satire (n.):</span> <span class="vocab-def">The use of humor, exaggeration, or irony to expose and criticize political corruption or human foolishness.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Extinction (n.):</span> <span class="vocab-def">The state or process of a species or group being completely wiped out.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Astronomer (n.):</span> <span class="vocab-def">A scientist who studies space, celestial bodies, and the physics of the universe.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Whistleblower (n.):</span> <span class="vocab-def">A person who exposes secretive, illegal, or unethical activity inside an organization to the public.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-0">
+            <div class="cloze-sentence">
+                1. Kate Dibiasky is a talented doctoral student working alongside her university professor as an 
+                <select class="cloze-select" data-answer="astronomer">
+                    <option value="">-- select --</option>
+                    <option value="satire">satire</option>
+                    <option value="extinction">extinction</option>
+                    <option value="astronomer">astronomer</option>
+                    <option value="whistleblower">whistleblower</option>
+                </select>.
+            </div>
+            <div class="cloze-sentence">
+                2. When the team calculates that the comet will cause total 
+                <select class="cloze-select" data-answer="extinction">
+                    <option value="">-- select --</option>
+                    <option value="satire">satire</option>
+                    <option value="extinction">extinction</option>
+                    <option value="astronomer">astronomer</option>
+                    <option value="whistleblower">whistleblower</option>
+                </select> on Earth, they realize they must alert the world immediately.
+            </div>
+            <div class="cloze-sentence">
+                3. After government officials try to hide the threat, the scientists act as a kind of public 
+                <select class="cloze-select" data-answer="whistleblower">
+                    <option value="">-- select --</option>
+                    <option value="satire">satire</option>
+                    <option value="extinction">extinction</option>
+                    <option value="astronomer">astronomer</option>
+                    <option value="whistleblower">whistleblower</option>
+                </select> to leak the news.
+            </div>
+            <div class="cloze-sentence">
+                4. The film uses sharp 
+                <select class="cloze-select" data-answer="satire">
+                    <option value="">-- select --</option>
+                    <option value="satire">satire</option>
+                    <option value="extinction">extinction</option>
+                    <option value="astronomer">astronomer</option>
+                    <option value="whistleblower">whistleblower</option>
+                </select> to mock how modern society handles major global emergencies.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(0)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-0"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> If you discovered a major global threat that nobody else knew about, who would you tell first—the government, the news media, or your family?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "In the modern internet age, leaking secrets to the media is the most effective way to force a government to take action."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 1 PANEL -->
+    <div class="segment-panel" id="panel-1">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 1: The Discovery & The Wall of Bureaucracy</h2>
+            <span class="timestamp">Timestamp: 0:00:00 – 0:26:30 (Duration: ~26 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> Kate Dibiasky and Dr. Randall Mindy make a terrifying astronomical discovery. Armed with hard scientific data, they travel to Washington D.C. to present their findings directly to the President of the United States—only to realize that scientific truth takes a backseat to political strategy.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Trajectory (n.):</span> <span class="vocab-def">The curved path that an object follows as it moves through space.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Bureaucracy (n.):</span> <span class="vocab-def">A complex system of official rules and procedures that can severely slow down decisions.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Apathy (n.):</span> <span class="vocab-def">A complete lack of interest, enthusiasm, or concern.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Spin (v./n.):</span> <span class="vocab-def">To present information in a biased or selective way to influence public opinion favorably.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-1">
+            <div class="cloze-sentence">
+                1. Kate calculates the exact 
+                <select class="cloze-select" data-answer="trajectory">
+                    <option value="">-- select --</option>
+                    <option value="trajectory">trajectory</option>
+                    <option value="bureaucracy">bureaucracy</option>
+                    <option value="apathy">apathy</option>
+                    <option value="spin">spin</option>
+                </select> of the comet and realizes it is heading directly toward Earth.
+            </div>
+            <div class="cloze-sentence">
+                2. When the scientists try to warn the government, they are delayed for hours by political 
+                <select class="cloze-select" data-answer="bureaucracy">
+                    <option value="">-- select --</option>
+                    <option value="trajectory">trajectory</option>
+                    <option value="bureaucracy">bureaucracy</option>
+                    <option value="apathy">apathy</option>
+                    <option value="spin">spin</option>
+                </select>.
+            </div>
+            <div class="cloze-sentence">
+                3. President Orlean and her chief of staff try to 
+                <select class="cloze-select" data-answer="spin">
+                    <option value="">-- select --</option>
+                    <option value="trajectory">trajectory</option>
+                    <option value="bureaucracy">bureaucracy</option>
+                    <option value="apathy">apathy</option>
+                    <option value="spin">spin</option>
+                </select> the terrifying news into something that won't ruin their election strategy.
+            </div>
+            <div class="cloze-sentence">
+                4. Instead of panicking, the politicians respond with complete 
+                <select class="cloze-select" data-answer="apathy">
+                    <option value="">-- select --</option>
+                    <option value="trajectory">trajectory</option>
+                    <option value="bureaucracy">bureaucracy</option>
+                    <option value="apathy">apathy</option>
+                    <option value="spin">spin</option>
+                </select> because the election is their main priority.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(1)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-1"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> Why do you think President Orlean was more worried about the upcoming midterms than a planetary threat? Have you seen real leaders act similarly?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "When delivering urgent bad news to the public, panic is worse than silence."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 2 PANEL -->
+    <div class="segment-panel" id="panel-2">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 2: Media Circus & Meltdown</h2>
+            <span class="timestamp">Timestamp: 0:26:30 – 0:51:00 (Duration: ~24.5 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> Frustrated by political inaction, the scientists go public on popular television. However, navigating lighthearted morning TV hosts proves difficult, leading to a dramatic moment on air while the government plans a spectacle of its own.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Sensationalism (n.):</span> <span class="vocab-def">The practice of using shocking language at the expense of accuracy to provoke interest.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Rhetoric (n.):</span> <span class="vocab-def">The art of effective or persuasive speaking or writing.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Deflect (v.):</span> <span class="vocab-def">To avoid answering a direct question by changing the subject.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Dismissive (adj.):</span> <span class="vocab-def">Showing that something is unworthy of serious consideration.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-2">
+            <div class="cloze-sentence">
+                1. The morning talk show hosts use heavy 
+                <select class="cloze-select" data-answer="sensationalism">
+                    <option value="">-- select --</option>
+                    <option value="sensationalism">sensationalism</option>
+                    <option value="rhetoric">rhetoric</option>
+                    <option value="deflect">deflect</option>
+                    <option value="dismissive">dismissive</option>
+                </select> to keep their TV ratings high and lighthearted.
+            </div>
+            <div class="cloze-sentence">
+                2. When Kate loses her temper on live TV, the media is incredibly 
+                <select class="cloze-select" data-answer="dismissive">
+                    <option value="">-- select --</option>
+                    <option value="sensationalism">sensationalism</option>
+                    <option value="rhetoric">rhetoric</option>
+                    <option value="deflect">deflect</option>
+                    <option value="dismissive">dismissive</option>
+                </select> of her warnings.
+            </div>
+            <div class="cloze-sentence">
+                3. The TV presenters continuously try to 
+                <select class="cloze-select" data-answer="deflect">
+                    <option value="">-- select --</option>
+                    <option value="sensationalism">sensationalism</option>
+                    <option value="rhetoric">rhetoric</option>
+                    <option value="deflect">deflect</option>
+                    <option value="dismissive">dismissive</option>
+                </select> the serious discussion by making jokes about pop stars.
+            </div>
+            <div class="cloze-sentence">
+                4. President Orlean relies on polished political 
+                <select class="cloze-select" data-answer="rhetoric">
+                    <option value="">-- select --</option>
+                    <option value="sensationalism">sensationalism</option>
+                    <option value="rhetoric">rhetoric</option>
+                    <option value="deflect">deflect</option>
+                    <option value="dismissive">dismissive</option>
+                </select> during her speech on the battleship.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(2)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-2"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> Why did the TV hosts fail to take Kate and Dr. Mindy seriously? What makes news programs treat serious issues like entertainment?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "Television hosts have a moral responsibility to inform the public, not just entertain them."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 3 PANEL -->
+    <div class="segment-panel" id="panel-3">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 3: Commercial Exploitation & Compromise</h2>
+            <span class="timestamp">Timestamp: 0:51:00 – 1:18:00 (Duration: ~27 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> Just as a mission is launched to divert the comet, a powerful tech billionaire intervenes with a profit-driven alternative. The scientists find themselves at a career crossroads as corporate interests rewrite global defense plans.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Monopolize (v.):</span> <span class="vocab-def">To gain total control or dominance over a trade or resource.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Compromise (v./n.):</span> <span class="vocab-def">To accept standards that are lower than desirable.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Eccentric (adj.):</span> <span class="vocab-def">Unconventional, slightly strange, or unusual in behavior.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Altruism (n.):</span> <span class="vocab-def">Disinterested and selfless concern for the well-being of others.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-3">
+            <div class="cloze-sentence">
+                1. Peter Isherwell, the 
+                <select class="cloze-select" data-answer="eccentric">
+                    <option value="">-- select --</option>
+                    <option value="monopolize">monopolize</option>
+                    <option value="compromise">compromise</option>
+                    <option value="eccentric">eccentric</option>
+                    <option value="altruism">altruism</option>
+                </select> CEO of BASH, holds immense influence over the government.
+            </div>
+            <div class="cloze-sentence">
+                2. BASH wants to 
+                <select class="cloze-select" data-answer="monopolize">
+                    <option value="">-- select --</option>
+                    <option value="monopolize">monopolize</option>
+                    <option value="compromise">compromise</option>
+                    <option value="eccentric">eccentric</option>
+                    <option value="altruism">altruism</option>
+                </select> the rare earth elements found inside the comet.
+            </div>
+            <div class="cloze-sentence">
+                3. Driven by greed rather than 
+                <select class="cloze-select" data-answer="altruism">
+                    <option value="">-- select --</option>
+                    <option value="monopolize">monopolize</option>
+                    <option value="compromise">compromise</option>
+                    <option value="eccentric">eccentric</option>
+                    <option value="altruism">altruism</option>
+                </select>, the tech giant convinces the government to abort the safety mission.
+            </div>
+            <div class="cloze-sentence">
+                4. Dr. Mindy begins to 
+                <select class="cloze-select" data-answer="compromise">
+                    <option value="">-- select --</option>
+                    <option value="monopolize">monopolize</option>
+                    <option value="compromise">compromise</option>
+                    <option value="eccentric">eccentric</option>
+                    <option value="altruism">altruism</option>
+                </select> his scientific integrity as he enjoys media fame.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(3)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-3"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> How does Peter Isherwell persuade the President to alter the comet mission? What arguments does he use?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "Private tech companies should never be allowed to influence national safety decisions."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 4 PANEL -->
+    <div class="segment-panel" id="panel-4">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 4: The Breaking Point</h2>
+            <span class="timestamp">Timestamp: 1:18:00 – 1:36:30 (Duration: ~18.5 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> As Dr. Mindy becomes a celebrity advisor, personal and ideological tensions reach maximum pressure. When corporate promises fail to match reality, an explosive public speech exposes the underlying truth.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Complicity (n.):</span> <span class="vocab-def">Involvement with others in an unethical activity or wrongdoing.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Denial (n.):</span> <span class="vocab-def">A refusal to accept the truth or reality of a situation.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Indictment (n.):</span> <span class="vocab-def">A formal accusation or strong expression of disapproval.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Hyperventilate (v.):</span> <span class="vocab-def">To breathe at an abnormally rapid rate due to extreme anxiety.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-4">
+            <div class="cloze-sentence">
+                1. As the comet gets closer, much of the public remains in total 
+                <select class="cloze-select" data-answer="denial">
+                    <option value="">-- select --</option>
+                    <option value="complicity">complicity</option>
+                    <option value="denial">denial</option>
+                    <option value="indictment">indictment</option>
+                    <option value="hyperventilate">hyperventilate</option>
+                </select> about their doom.
+            </div>
+            <div class="cloze-sentence">
+                2. Dr. Mindy begins to 
+                <select class="cloze-select" data-answer="hyperventilate">
+                    <option value="">-- select --</option>
+                    <option value="complicity">complicity</option>
+                    <option value="denial">denial</option>
+                    <option value="indictment">indictment</option>
+                    <option value="hyperventilate">hyperventilate</option>
+                </select> on live TV right before launching into his emotional rant.
+            </div>
+            <div class="cloze-sentence">
+                3. Mindy's televised breakdown serves as a fierce 
+                <select class="cloze-select" data-answer="indictment">
+                    <option value="">-- select --</option>
+                    <option value="complicity">complicity</option>
+                    <option value="denial">denial</option>
+                    <option value="indictment">indictment</option>
+                    <option value="hyperventilate">hyperventilate</option>
+                </select> of society's shallow priorities.
+            </div>
+            <div class="cloze-sentence">
+                4. Kate accuses Dr. Mindy of 
+                <select class="cloze-select" data-answer="complicity">
+                    <option value="">-- select --</option>
+                    <option value="complicity">complicity</option>
+                    <option value="denial">denial</option>
+                    <option value="indictment">indictment</option>
+                    <option value="hyperventilate">hyperventilate</option>
+                </select> for staying silent while BASH pushed its plan.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(4)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-4"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> Was Dr. Mindy's live TV outburst an effective way to speak to the public, or did it come too late?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "Scientific experts should remain neutral and quiet in public, regardless of political corruption."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 5 PANEL -->
+    <div class="segment-panel" id="panel-5">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 5: Just Look Up vs. Don't Look Up</h2>
+            <span class="timestamp">Timestamp: 1:36:30 – 1:57:00 (Duration: ~20.5 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> With the comet finally visible in the night sky with the naked eye, the world splits into opposing political camps. Slogans, concerts, and social media campaigns battle for control of public perception while international alternatives crumble.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Polarization (n.):</span> <span class="vocab-def">Division into two sharply contrasting groups or sets of opinions.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Slogan (n.):</span> <span class="vocab-def">A short and striking phrase used in advertising or political campaigns.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Manipulate (v.):</span> <span class="vocab-def">To control or influence a person or situation unfairly or deceitfully.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Impending (adj.):</span> <span class="vocab-def">About to happen; imminent or threatening.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-5">
+            <div class="cloze-sentence">
+                1. The political climate reaches extreme 
+                <select class="cloze-select" data-answer="polarization">
+                    <option value="">-- select --</option>
+                    <option value="polarization">polarization</option>
+                    <option value="slogan">slogan</option>
+                    <option value="manipulate">manipulate</option>
+                    <option value="impending">impending</option>
+                </select> as society splits into opposing groups.
+            </div>
+            <div class="cloze-sentence">
+                2. The President’s campaign uses the simple 
+                <select class="cloze-select" data-answer="slogan">
+                    <option value="">-- select --</option>
+                    <option value="polarization">polarization</option>
+                    <option value="slogan">slogan</option>
+                    <option value="manipulate">manipulate</option>
+                    <option value="impending">impending</option>
+                </select> "Don't Look Up" to influence voters.
+            </div>
+            <div class="cloze-sentence">
+                3. Politicians and media outlets 
+                <select class="cloze-select" data-answer="manipulate">
+                    <option value="">-- select --</option>
+                    <option value="polarization">polarization</option>
+                    <option value="slogan">slogan</option>
+                    <option value="manipulate">manipulate</option>
+                    <option value="impending">impending</option>
+                </select> public perception by making science a loyalty test.
+            </div>
+            <div class="cloze-sentence">
+                4. Despite the 
+                <select class="cloze-select" data-answer="impending">
+                    <option value="">-- select --</option>
+                    <option value="polarization">polarization</option>
+                    <option value="slogan">slogan</option>
+                    <option value="manipulate">manipulate</option>
+                    <option value="impending">impending</option>
+                </select> disaster visible in the sky, millions ignore reality.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(5)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-5"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> How does the movie mirror real-world political slogans and social media movements?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "Social media platforms bear more responsibility for public ignorance than traditional politicians."</div>
+        </div>
+    </div>
+
+    <!-- SEGMENT 6 PANEL -->
+    <div class="segment-panel" id="panel-6">
+        <div class="panel-header">
+            <h2 class="panel-title">Segment 6: The Final Meal & Impact</h2>
+            <span class="timestamp">Timestamp: 1:57:00 – 2:18:00 (Duration: ~21 mins)</span>
+        </div>
+        <div class="blurb-box">
+            <strong>Segment Blurb:</strong> As BASH launches its risky drone mining mission, the main characters turn away from the noise of public debate to spend their final moments together, contrasting corporate arrogance with quiet human connection.
+        </div>
+
+        <div class="section-title">Target Vocabulary</div>
+        <div class="vocab-list">
+            <div class="vocab-card"><span class="vocab-word">Hubris (n.):</span> <span class="vocab-def">Excessive pride or arrogance that leads to a downfall.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Resignation (n.):</span> <span class="vocab-def">The acceptance of something undesirable but inevitable.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Absurdity (n.):</span> <span class="vocab-def">The quality or state of being wildly unreasonable or ridiculous.</span></div>
+            <div class="vocab-card"><span class="vocab-word">Futility (n.):</span> <span class="vocab-def">Pointlessness or uselessness; having no useful result.</span></div>
+        </div>
+
+        <div class="section-title">Interactive Cloze Quiz</div>
+        <div class="cloze-container" id="cloze-6">
+            <div class="cloze-sentence">
+                1. BASH's mission fails due to the sheer 
+                <select class="cloze-select" data-answer="hubris">
+                    <option value="">-- select --</option>
+                    <option value="hubris">hubris</option>
+                    <option value="resignation">resignation</option>
+                    <option value="absurdity">absurdity</option>
+                    <option value="futility">futility</option>
+                </select> and overconfidence of Peter Isherwell.
+            </div>
+            <div class="cloze-sentence">
+                2. Rather than fleeing, the scientists spend their last moments at a dinner table with calm 
+                <select class="cloze-select" data-answer="resignation">
+                    <option value="">-- select --</option>
+                    <option value="hubris">hubris</option>
+                    <option value="resignation">resignation</option>
+                    <option value="absurdity">absurdity</option>
+                    <option value="futility">futility</option>
+                </select>.
+            </div>
+            <div class="cloze-sentence">
+                3. The characters realize the total 
+                <select class="cloze-select" data-answer="futility">
+                    <option value="">-- select --</option>
+                    <option value="hubris">hubris</option>
+                    <option value="resignation">resignation</option>
+                    <option value="absurdity">absurdity</option>
+                    <option value="futility">futility</option>
+                </select> of trying to bargain with an unstoppable natural event.
+            </div>
+            <div class="cloze-sentence">
+                4. The satire ends by exposing the extreme 
+                <select class="cloze-select" data-answer="absurdity">
+                    <option value="">-- select --</option>
+                    <option value="hubris">hubris</option>
+                    <option value="resignation">resignation</option>
+                    <option value="absurdity">absurdity</option>
+                    <option value="futility">futility</option>
+                </select> of human society destroying itself.
+            </div>
+            <button class="check-btn" onclick="checkAnswers(6)">Check Answers</button>
+            <span class="feedback-msg" id="feedback-6"></span>
+        </div>
+
+        <div class="section-title">Discussion & Debate</div>
+        <div class="questions-section">
+            <div class="q-box"><span class="badge badge-disc">Discussion</span> What did you think of the contrast between the chaotic planetary destruction and the quiet family dinner in the final scene?</div>
+            <div class="q-box"><span class="badge badge-deb">Debate</span> "Satire and comedy are more effective tools for changing public opinion on global issues than serious documentary films."</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showSegment(index) {
+        // Update nav buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach((btn, idx) => {
+            if (idx === index) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update panels
+        const panels = document.querySelectorAll('.segment-panel');
+        panels.forEach((panel, idx) => {
+            if (idx === index) {
+                panel.classList.add('active');
+            } else {
+                panel.classList.remove('active');
+            }
+        });
+    }
+
+    function checkAnswers(segmentIndex) {
+        const container = document.getElementById(`cloze-${segmentIndex}`);
+        const selects = container.querySelectorAll('.cloze-select');
+        let correctCount = 0;
+        let totalCount = selects.length;
+
+        selects.forEach(select => {
+            const expected = select.getAttribute('data-answer');
+            const selected = select.value;
+
+            select.classList.remove('correct', 'incorrect');
+
+            if (selected === expected) {
+                select.classList.add('correct');
+                correctCount++;
+            } else {
+                select.classList.add('incorrect');
+            }
+        });
+
+        const feedbackMsg = document.getElementById(`feedback-${segmentIndex}`);
+        if (correctCount === totalCount) {
+            feedbackMsg.style.color = '#4ade80';
+            feedbackMsg.textContent = `Excellent! ${correctCount}/${totalCount} correct.`;
+        } else {
+            feedbackMsg.style.color = '#fca5a5';
+            feedbackMsg.textContent = `${correctCount}/${totalCount} correct. Try again!`;
+        }
+    }
+</script>
+
+</body>
+</html>
